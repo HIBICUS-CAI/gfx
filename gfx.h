@@ -8249,6 +8249,12 @@ private:
             GFX_SNPRINTF(shader_file, sizeof(shader_file), "%s/%s%s", program.file_path_.c_str(), program.file_name_.c_str(), shader_extensions_[shader_type]);
             mbstowcs(wshader_file, shader_file, ARRAYSIZE(shader_file));
             // Check file existence before LoadFile call. LoadFile spams hlsl::Exception messages if file not found.
+            if (GetFileAttributesW(wshader_file) == INVALID_FILE_ATTRIBUTES)
+            {
+                GFX_SNPRINTF(shader_file, sizeof(shader_file), "%s/%s%s.hlsl", program.file_path_.c_str(),
+                    program.file_name_.c_str(), shader_extensions_[shader_type]);
+                mbstowcs(wshader_file, shader_file, ARRAYSIZE(shader_file));
+            }
             if(GetFileAttributesW(wshader_file) == INVALID_FILE_ATTRIBUTES) return;
             dxc_utils_->LoadFile(wshader_file, nullptr, &dxc_source);
             if(!dxc_source) return; // failed to load source file
@@ -8259,6 +8265,12 @@ private:
         {
             GFX_SNPRINTF(shader_file, sizeof(shader_file), "%s%s", program.file_path_.c_str(), shader_extensions_[shader_type]);
             mbstowcs(wshader_file, shader_file, ARRAYSIZE(shader_file));
+            if (GetFileAttributesW(wshader_file) == INVALID_FILE_ATTRIBUTES)
+            {
+                GFX_SNPRINTF(shader_file, sizeof(shader_file), "%s/%s%s.hlsl", program.file_path_.c_str(),
+                    program.file_name_.c_str(), shader_extensions_[shader_type]);
+                mbstowcs(wshader_file, shader_file, ARRAYSIZE(shader_file));
+            }
             switch(shader_type)
             {
             case kShaderType_CS:
